@@ -48,24 +48,31 @@ for file in modified_files:
 
 print("\033[92mFichiers modifiés:\033[0m\n" + "\n".join(diffs))
 
-# Générer le résumé des modifications avec GPT-3.5 Turbo
-summary_prompt = "\n".join(diffs)
-response_summary = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo",
-    messages=[
-        {"role": "system", "content": summary_context},
-        {"role": "user", "content": summary_prompt},
-    ],
-    temperature=0.7,
-)
-summary_message = response_summary.choices[-1].message.content.strip()
+while True:
+    # Générer le résumé des modifications avec GPT-3.5 Turbo
+    summary_prompt = "\n".join(diffs)
+    response_summary = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": summary_context},
+            {"role": "user", "content": summary_prompt},
+        ],
+        temperature=0.7,
+    )
+    summary_message = response_summary.choices[-1].message.content.strip()
 
-# Afficher le résumé en vert et demander l'approbation de l'utilisateur pour continuer sinon demande le résumé à l'utilisateur.
-print("\033[92mRésumé des modifications:\033[0m\n" + summary_message)
-user_input = input("Est-ce que le résumé vous convient? (y) Oui, (n) Non")
-if user_input == "n":
-    summary_message = input("Veuillez entrer un résumé: ")
-
+    # Afficher le résumé en vert et demander l'approbation de l'utilisateur pour continuer sinon demande le résumé à l'utilisateur.
+    print("\033[92mRésumé des modifications:\033[0m\n" + summary_message)
+    user_input = input("Est-ce que le résumé vous convient? (y) Oui, (r) Non, (c) Choisir le résumé : ")
+    if user_input == "n":
+        # Recommencer la génération
+        continue
+    elif user_input == "c":
+        summary_message = input("Veuillez entrer un résumé: ")
+        break
+    elif user_input == "y":
+        break
+    
 while True:
     # Générer le message de commit avec GPT-3.5 Turbo en utilisant le résumé et les fichiers modifiés
     commit_prompt = "\n".join(modified_files + [summary_message])

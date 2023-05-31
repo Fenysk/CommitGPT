@@ -49,17 +49,22 @@ for file in modified_files:
 print("\033[92mFichiers modifiés:\033[0m\n" + "\n".join(modified_files))
 
 while True:
-    # Générer le résumé des modifications avec GPT-3.5 Turbo
-    summary_prompt = "\n".join(diffs)
-    response_summary = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": summary_context},
-            {"role": "user", "content": summary_prompt},
-        ],
-        temperature=0.7,
-    )
-    summary_message = response_summary.choices[-1].message.content.strip()
+    
+    try:
+        # Générer le résumé des modifications avec GPT-3.5 Turbo
+        summary_prompt = "\n".join(diffs)
+        response_summary = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": summary_context},
+                {"role": "user", "content": summary_prompt},
+            ],
+            temperature=0.7,
+        )
+        summary_message = response_summary.choices[-1].message.content.strip()
+    except:
+        print("\033[91mGPT-3.5 Turbo n'a pas pu générer de résumé.\033[0m")
+        summary_message = input("Veuillez entrer un résumé: ")
 
     # Afficher le résumé en vert et demander l'approbation de l'utilisateur pour continuer sinon demande le résumé à l'utilisateur.
     print("\033[92mRésumé des modifications:\033[0m\n" + summary_message)
@@ -74,17 +79,22 @@ while True:
         break
     
 while True:
-    # Générer le message de commit avec GPT-3.5 Turbo en utilisant le résumé et les fichiers modifiés
-    commit_prompt = "\n".join(modified_files + [summary_message])
-    response_commit = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": commit_context},
-            {"role": "user", "content": commit_prompt},
-        ],
-        temperature=0.7,
-    )
-    commit_message = response_commit.choices[-1].message.content.strip()
+    
+    try:
+        # Générer le message de commit avec GPT-3.5 Turbo en utilisant le résumé et les fichiers modifiés
+        commit_prompt = "\n".join(modified_files + [summary_message])
+        response_commit = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": commit_context},
+                {"role": "user", "content": commit_prompt},
+            ],
+            temperature=0.7,
+        )
+        commit_message = response_commit.choices[-1].message.content.strip()
+    except:
+        print("\033[91mGPT-3.5 Turbo n'a pas pu générer de message de commit.\033[0m")
+        commit_message = input("Veuillez entrer un message de commit: ")
 
     # Afficher le message de commit et demander l'approbation de l'utilisateur
     print("Message de commit: " + commit_message)

@@ -46,7 +46,7 @@ for file in modified_files:
         # Seules les lignes commençant par '+' ou '-' sont conservées, mais on élimine celles qui commencent par '---' ou '+++'
         diffs.append('\n'.join(line for line in lines if line.startswith(('+', '-')) and not line.startswith(('---', '+++'))))
 
-print("\033[92mFichiers modifiés:\033[0m\n" + "\n".join(diffs))
+print("\033[92mFichiers modifiés:\033[0m\n" + "\n".join(modified_files))
 
 while True:
     # Générer le résumé des modifications avec GPT-3.5 Turbo
@@ -63,7 +63,7 @@ while True:
 
     # Afficher le résumé en vert et demander l'approbation de l'utilisateur pour continuer sinon demande le résumé à l'utilisateur.
     print("\033[92mRésumé des modifications:\033[0m\n" + summary_message)
-    user_input = input("Est-ce que le résumé vous convient? (y) Oui, (r) Non, (c) Choisir le résumé : ")
+    user_input = input("Est-ce que le résumé vous convient? (y) Oui, (r) Regénérer, (c) Choisir le résumé : ")
     if user_input == "n":
         # Recommencer la génération
         continue

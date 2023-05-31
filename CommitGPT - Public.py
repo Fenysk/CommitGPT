@@ -41,7 +41,7 @@ for file in modified_files:
         diffs.append(diff)
     else:
         # Récupérer les différences avant - après
-        diff_output = repo.git.diff("HEAD", file, create_patch=True)
+        diff_output = repo.git.diff("HEAD", file)
         lines = diff_output.split('\n')
         # Seules les lignes commençant par '+' ou '-' sont conservées, mais on élimine celles qui commencent par '---' ou '+++'
         diffs.append('\n'.join(line for line in lines if line.startswith(('+', '-')) and not line.startswith(('---', '+++'))))
